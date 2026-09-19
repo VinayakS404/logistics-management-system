@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+:root {
+  --bg-page: #f5f7fb;
+  --bg-card: #ffffff;
+  --bg-elevated: #f8fafc;
+  --border-soft: #e2e8f0;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+}
+
+@theme {
+  --animate-fade-up: fade-up 500ms ease-out both;
+  --animate-scale-in: scale-in 300ms ease-out both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: Inter, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  a,
+  input {
+    transition-duration: 180ms;
+  }
+}
+
+@layer components {
+  [class~="text-[9px]"] {
+    font-size: 0.625rem !important;
+  }
+
+  [class~="text-[10px]"] {
+    font-size: 0.6875rem !important;
+  }
+
+  [class~="text-[11px]"] {
+    font-size: 0.75rem !important;
+  }
+
+  [class~="text-gray-400"],
+  [class~="text-slate-400"] {
+    color: #64748b !important;
+  }
+
+  header.sticky {
+    border-color: var(--border-soft);
+    box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+  }
+
+  section.rounded-xl.border,
+  div.rounded-xl.border,
+  div.rounded-lg.border,
+  div.rounded-2xl.border {
+    border-color: var(--border-soft);
+    box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.02);
+    transition:
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  section.rounded-xl.border:hover,
+  div.rounded-xl.border:hover,
+  div.rounded-2xl.border:hover {
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  main > * {
+    animation: fade-up 500ms ease-out both;
+  }
+
+  main button:not([aria-label]),
+  main a {
+    transition:
+      color 180ms ease,
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      transform 180ms ease;
+  }
+
+  main button:not([aria-label]):active {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
