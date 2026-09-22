@@ -1,10 +1,4 @@
-import {
-  Menu,
-  X,
-  Truck,
-  Search,
-  Bell,
-} from "lucide-react";
+import { Menu, X, Truck, Search, Bell } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 import { useLayout } from "../context/LayoutContext";
@@ -30,10 +24,7 @@ export default function Header({
         </button>
 
         {/* Mobile brand */}
-        <NavLink
-          to="/"
-          className="flex shrink-0 items-center gap-2 lg:hidden"
-        >
+        <NavLink to="/" className="flex shrink-0 items-center gap-2 lg:hidden">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-black text-white shadow-sm shadow-slate-300">
             <Truck size={15} strokeWidth={2.2} />
           </div>

@@ -4,7 +4,7 @@ export const LayoutContext = createContext(null);
 
 export function LayoutProvider({ children, onMenuClick }) {
   return (
-    <LayoutContext.Provider value={{ onMenuClick }}>
+    <LayoutContext.Provider value={{ onMenuClick : onMenuClick }}>
       {children}
     </LayoutContext.Provider>
   );

@@ -19,8 +19,12 @@ import {
   Menu,
   X,
 } from "lucide-react";
+
+import { useEffect, useState } from "react";
+
 import { useLayout } from "../context/LayoutContext";
 
+/*
 const orders = [
   {
     id: "LD-28491",
@@ -111,7 +115,7 @@ const orders = [
     amount: "₹1,890",
   },
 ];
-
+*/
 function StatusBadge({ status }) {
   const styles = {
     "In Transit": "bg-blue-50 text-blue-700 border-blue-100",
@@ -124,8 +128,7 @@ function StatusBadge({ status }) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium ${
-        styles[status] ||
-        "border-gray-100 bg-gray-50 text-gray-600"
+        styles[status] || "border-gray-100 bg-gray-50 text-gray-600"
       }`}
     >
       {status === "Delivered" && <CheckCircle2 size={12} />}
@@ -145,14 +148,7 @@ function StatusBadge({ status }) {
   );
 }
 
-function StatCard({
-  label,
-  value,
-  description,
-  icon: Icon,
-  iconClass,
-  trend,
-}) {
+function StatCard({ label, value, description, icon: Icon, iconClass, trend }) {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition duration-200 hover:-translate-y-0.5 hover:shadow-sm">
       <div className="flex items-start justify-between">
@@ -181,9 +177,7 @@ function StatCard({
           </span>
         )}
 
-        <span className="text-[11px] text-gray-400">
-          {description}
-        </span>
+        <span className="text-[11px] text-gray-400">{description}</span>
       </div>
     </div>
   );
@@ -191,14 +185,24 @@ function StatCard({
 
 export default function Orders() {
   const { sidebarOpen, toggleSidebar } = useLayout();
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    const fetchDrivers = async () => {
+      const response = await fetch("http://localhost:8000/api/test/orders");
+      const data = await response.json();
+
+      setOrders(data);
+    };
+
+    fetchDrivers();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
-
       {/* ================= HEADER ================= */}
 
       <header className="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-gray-200 bg-white/95 px-3 backdrop-blur sm:px-5 lg:px-8">
-
         <div className="flex min-w-0 items-center gap-4">
           <button
             type="button"
@@ -210,18 +214,15 @@ export default function Orders() {
           </button>
 
           <div className="min-w-0">
-          <h2 className="text-[15px] font-semibold text-gray-900">
-            Orders
-          </h2>
+            <h2 className="text-[15px] font-semibold text-gray-900">Orders</h2>
 
-          <p className="mt-0.5 text-[11px] text-gray-400">
-            Operations · September 19, 2026
-          </p>
+            <p className="mt-0.5 text-[11px] text-gray-400">
+              Operations · September 19, 2026
+            </p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-
           {/* Search */}
 
           <div className="relative hidden lg:block">
@@ -259,11 +260,9 @@ export default function Orders() {
       {/* ================= CONTENT ================= */}
 
       <div className="px-8 py-7">
-
         {/* Page heading */}
 
         <div className="mb-6 flex items-end justify-between">
-
           <div>
             <p className="text-[11px] font-medium text-gray-400">
               OPERATIONS CENTER
@@ -290,7 +289,6 @@ export default function Orders() {
         {/* ================= STATS ================= */}
 
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-5">
-
           <StatCard
             label="Total Orders"
             value="247"
@@ -337,13 +335,10 @@ export default function Orders() {
         {/* ================= ORDER TABLE ================= */}
 
         <section className="mt-5 overflow-hidden rounded-xl border border-gray-200 bg-white">
-
           {/* Table Header */}
 
           <div className="border-b border-gray-100 px-5 py-4">
-
             <div className="flex items-center justify-between">
-
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
                   All orders
@@ -355,7 +350,6 @@ export default function Orders() {
               </div>
 
               <div className="flex items-center gap-2">
-
                 <button
                   type="button"
                   className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[11px] font-medium text-gray-600 transition hover:bg-gray-50"
@@ -371,14 +365,12 @@ export default function Orders() {
                   <Download size={13} />
                   Export
                 </button>
-
               </div>
             </div>
 
             {/* Filter tabs */}
 
             <div className="mt-5 flex items-center gap-5">
-
               {[
                 ["All orders", "247"],
                 ["Pending", "18"],
@@ -386,7 +378,6 @@ export default function Orders() {
                 ["Delivered", "128"],
                 ["Exceptions", "12"],
               ].map(([label, count], index) => (
-
                 <button
                   type="button"
                   key={label}
@@ -419,12 +410,9 @@ export default function Orders() {
           {/* Table */}
 
           <div className="overflow-x-auto">
-
             <table className="w-full min-w-237.5">
-
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50/70">
-
                   <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
                     Order
                   </th>
@@ -458,25 +446,19 @@ export default function Orders() {
                   </th>
 
                   <th className="w-10" />
-
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-gray-100">
-
                 {orders.map((order) => (
-
                   <tr
                     key={order.id}
                     className="group cursor-pointer transition hover:bg-gray-50/70"
                   >
-
                     {/* Order */}
 
                     <td className="px-5 py-4">
-
                       <div className="flex items-center gap-3">
-
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-500 transition group-hover:bg-gray-900 group-hover:text-white">
                           <Package size={14} />
                         </div>
@@ -490,14 +472,12 @@ export default function Orders() {
                             Standard delivery
                           </p>
                         </div>
-
                       </div>
                     </td>
 
                     {/* Customer */}
 
                     <td className="px-5 py-4">
-
                       <p className="text-[11px] font-medium text-gray-700">
                         {order.customer}
                       </p>
@@ -505,42 +485,29 @@ export default function Orders() {
                       <p className="mt-0.5 text-[9px] text-gray-400">
                         Customer
                       </p>
-
                     </td>
 
                     {/* Route */}
 
                     <td className="px-5 py-4">
-
                       <div className="flex items-center gap-2">
-
-                        <MapPin
-                          size={12}
-                          className="text-gray-400"
-                        />
+                        <MapPin size={12} className="text-gray-400" />
 
                         <span className="text-[11px] text-gray-600">
-                          {order.route}
+                          {`${order.origin} to ${order.destinatioin}`}
                         </span>
-
                       </div>
-
                     </td>
 
                     {/* Driver */}
 
                     <td className="px-5 py-4">
-
                       {order.driver === "Unassigned" ? (
-
                         <span className="text-[10px] font-medium text-orange-600">
                           Unassigned
                         </span>
-
                       ) : (
-
                         <div className="flex items-center gap-2">
-
                           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-[9px] font-semibold text-gray-600">
                             {order.driver
                               .split(" ")
@@ -552,10 +519,8 @@ export default function Orders() {
                           <span className="text-[11px] text-gray-600">
                             {order.driver}
                           </span>
-
                         </div>
                       )}
-
                     </td>
 
                     {/* Vehicle number */}
@@ -591,7 +556,6 @@ export default function Orders() {
                     {/* Date */}
 
                     <td className="px-5 py-4">
-
                       <p className="text-[10px] font-medium text-gray-600">
                         {order.date}
                       </p>
@@ -599,35 +563,28 @@ export default function Orders() {
                       <p className="mt-0.5 text-[9px] text-gray-400">
                         {order.time}
                       </p>
-
                     </td>
 
                     {/* Amount */}
 
                     <td className="px-5 py-4 text-right">
-
                       <span className="text-[11px] font-semibold text-gray-800">
-                        {order.amount}
+                        {`₹ ${order.value}`}
                       </span>
-
                     </td>
 
                     {/* Actions */}
 
                     <td className="px-4">
-
                       <button
                         type="button"
                         className="rounded-md p-1 text-gray-300 transition hover:bg-gray-100 hover:text-gray-600"
                       >
                         <MoreHorizontal size={15} />
                       </button>
-
                     </td>
-
                   </tr>
                 ))}
-
               </tbody>
             </table>
           </div>
@@ -635,21 +592,12 @@ export default function Orders() {
           {/* Footer */}
 
           <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3.5">
-
             <p className="text-[10px] text-gray-400">
-              Showing{" "}
-              <span className="font-medium text-gray-600">
-                1–8
-              </span>{" "}
-              of{" "}
-              <span className="font-medium text-gray-600">
-                247
-              </span>{" "}
-              orders
+              Showing <span className="font-medium text-gray-600">1–8</span> of{" "}
+              <span className="font-medium text-gray-600">247</span> orders
             </p>
 
             <div className="flex items-center gap-1">
-
               <button
                 type="button"
                 className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-gray-400 transition hover:bg-gray-50 hover:text-gray-700"
@@ -678,9 +626,7 @@ export default function Orders() {
                 3
               </button>
 
-              <span className="px-1 text-[10px] text-gray-400">
-                ...
-              </span>
+              <span className="px-1 text-[10px] text-gray-400">...</span>
 
               <button
                 type="button"
@@ -688,7 +634,6 @@ export default function Orders() {
               >
                 <ChevronRight size={13} />
               </button>
-
             </div>
           </div>
         </section>
@@ -696,13 +641,10 @@ export default function Orders() {
         {/* ================= BOTTOM INFO ================= */}
 
         <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
-
           {/* Delivery Progress */}
 
           <section className="rounded-xl border border-gray-200 bg-white p-5">
-
             <div className="flex items-center justify-between">
-
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
                   Delivery progress
@@ -713,34 +655,26 @@ export default function Orders() {
                 </p>
               </div>
 
-              <span className="text-sm font-semibold text-gray-900">
-                72%
-              </span>
-
+              <span className="text-sm font-semibold text-gray-900">72%</span>
             </div>
 
             <div className="mt-5 h-2 overflow-hidden rounded-full bg-gray-100">
-
               <div
                 className="h-full rounded-full bg-gray-900 transition-all duration-700"
                 style={{ width: "72%" }}
               />
-
             </div>
 
             <div className="mt-3 flex justify-between text-[10px] text-gray-400">
               <span>128 delivered</span>
               <span>177 planned</span>
             </div>
-
           </section>
 
           {/* Dispatch Queue */}
 
           <section className="rounded-xl border border-gray-200 bg-white p-5">
-
             <div className="flex items-start justify-between">
-
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
                   Dispatch queue
@@ -754,11 +688,9 @@ export default function Orders() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
                 <Navigation size={15} />
               </div>
-
             </div>
 
             <div className="mt-5 flex items-end gap-2">
-
               <span className="text-2xl font-semibold tracking-tight text-gray-900">
                 18
               </span>
@@ -766,7 +698,6 @@ export default function Orders() {
               <span className="mb-1 text-[10px] text-gray-400">
                 orders pending
               </span>
-
             </div>
 
             <button
@@ -776,15 +707,12 @@ export default function Orders() {
               Open dispatch queue
               <ArrowUpRight size={12} />
             </button>
-
           </section>
 
           {/* Exceptions */}
 
           <section className="rounded-xl border border-gray-200 bg-white p-5">
-
             <div className="flex items-start justify-between">
-
               <div>
                 <h3 className="text-sm font-semibold text-gray-900">
                   Order exceptions
@@ -798,11 +726,9 @@ export default function Orders() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
                 <CircleAlert size={15} />
               </div>
-
             </div>
 
             <div className="mt-5 flex items-end gap-2">
-
               <span className="text-2xl font-semibold tracking-tight text-gray-900">
                 12
               </span>
@@ -810,7 +736,6 @@ export default function Orders() {
               <span className="mb-1 text-[10px] text-gray-400">
                 active exceptions
               </span>
-
             </div>
 
             <button
@@ -820,9 +745,7 @@ export default function Orders() {
               Review exceptions
               <ArrowUpRight size={12} />
             </button>
-
           </section>
-
         </div>
       </div>
     </div>
