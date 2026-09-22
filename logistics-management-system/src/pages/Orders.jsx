@@ -184,6 +184,11 @@ export default function Orders() {
     },
   ];
 
+  const  deliveryPercentage =
+    statusCounts.all > 0
+      ? (statusCounts.delivered / statusCounts.all) * 100
+      : 0;
+
   return (
     <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
       {/* ================= HEADER ================= */}
@@ -598,17 +603,19 @@ export default function Orders() {
                   Today's order completion
                 </p>
               </div>
-              <span className="text-sm font-semibold text-gray-900">72%</span>
+              <span className="text-sm font-semibold text-gray-900">
+                {deliveryPercentage.toFixed(1)}%
+              </span>
             </div>
             <div className="mt-5 h-2 overflow-hidden rounded-full bg-gray-100">
               <div
                 className="h-full rounded-full bg-gray-900 transition-all duration-700"
-                style={{ width: "72%" }}
+                style={{ width: `${deliveryPercentage}%` }}
               />
             </div>
             <div className="mt-3 flex justify-between text-[10px] text-gray-400">
-              <span>128 delivered</span>
-              <span>177 planned</span>
+              <span>{statusCounts.delivered} delivered</span>
+              <span>{statusCounts.all} planned</span>
             </div>
           </section>
 
