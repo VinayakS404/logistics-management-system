@@ -22,27 +22,28 @@ import {
 
 import { useEffect, useState } from "react";
 import { useLayout } from "../context/LayoutContext";
+import SectionHeader from "../components/SectionHeader";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 function StatusBadge({ status }) {
   const styles = {
-    "In Transit": "bg-blue-50 text-blue-700 border-blue-100",
-    Delivered: "bg-emerald-50 text-emerald-700 border-emerald-100",
-    Delayed: "bg-orange-50 text-orange-700 border-orange-100",
-    Pending: "bg-yellow-50 text-yellow-700 border-yellow-100",
-    Cancelled: "bg-red-50 text-red-600 border-red-100",
+    "In Transit": "bg-info-bg text-info border-info-border",
+    Delivered: "bg-success-bg text-success border-success-border",
+    Delayed: "bg-warning-bg text-warning border-warning-border",
+    Pending: "bg-warning-bg text-warning border-warning-border",
+    Cancelled: "bg-danger-bg text-danger border-danger-border",
   };
 
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-medium ${
-        styles[status] || "border-gray-100 bg-gray-50 text-gray-600"
+        styles[status] || "border-border bg-hover text-secondary"
       }`}
     >
       {status === "Delivered" && <CheckCircle2 size={12} />}
       {status === "In Transit" && (
-        <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+        <span className="h-1.5 w-1.5 rounded-full bg-info" />
       )}
       {status === "Delayed" && <CircleAlert size={12} />}
       {status === "Pending" && <Clock3 size={12} />}
@@ -54,13 +55,13 @@ function StatusBadge({ status }) {
 
 function StatCard({ label, value, description, icon: Icon, iconClass, trend }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition duration-200 hover:-translate-y-0.5 hover:shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-card transition duration-200 hover:-translate-y-0.5 hover:shadow-card">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-gray-400">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted">
             {label}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
             {value}
           </h2>
         </div>
@@ -72,12 +73,12 @@ function StatCard({ label, value, description, icon: Icon, iconClass, trend }) {
       </div>
       <div className="mt-4 flex items-center gap-2">
         {trend && (
-          <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+          <span className="flex items-center gap-1 text-[11px] font-medium text-success">
             <ArrowUpRight size={12} />
             {trend}
           </span>
         )}
-        <span className="text-[11px] text-gray-400">{description}</span>
+        <span className="text-[11px] text-muted">{description}</span>
       </div>
     </div>
   );
@@ -99,6 +100,7 @@ export default function Orders() {
     hasNextPage: false,
     hasPrevPage: false,
   });
+
   const [statusCounts, setStatusCounts] = useState({
     all: 0,
     pending: 0,
@@ -144,6 +146,7 @@ export default function Orders() {
     totalItems === 0
       ? 0
       : (pagination.currentPage - 1) * pagination.pageSize + 1;
+
   const lastElementNum = Math.min(
     pagination.currentPage * pagination.pageSize,
     totalItems,
@@ -184,28 +187,30 @@ export default function Orders() {
     },
   ];
 
-  const  deliveryPercentage =
+  const deliveryPercentage =
     statusCounts.all > 0
       ? (statusCounts.delivered / statusCounts.all) * 100
       : 0;
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
+    <div className="min-h-screen bg-page text-foreground">
       {/* ================= HEADER ================= */}
-      <header className="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-gray-200 bg-white/95 px-3 backdrop-blur sm:px-5 lg:px-8">
+      <header className="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-border bg-card/95 px-3 backdrop-blur sm:px-5 lg:px-8">
         <div className="flex min-w-0 items-center gap-4">
           <button
             type="button"
             onClick={toggleSidebar}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-300 text-gray-600 shadow-sm transition hover:bg-gray-100 hover:text-gray-900"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border-strong text-secondary shadow-sm transition hover:bg-hover hover:text-foreground"
             aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
           >
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
 
           <div className="min-w-0">
-            <h2 className="text-[15px] font-semibold text-gray-900">Orders</h2>
-            <p className="mt-0.5 text-[11px] text-gray-400">
+            <h2 className="text-[15px] font-semibold text-foreground">
+              Orders
+            </h2>
+            <p className="mt-0.5 text-[11px] text-muted">
               Operations · {formattedDate}
             </p>
           </div>
@@ -215,7 +220,7 @@ export default function Orders() {
           <div className="relative hidden lg:block">
             <Search
               size={15}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted"
             />
             <input
               type="text"
@@ -225,19 +230,19 @@ export default function Orders() {
                 setPageNum(1);
               }}
               placeholder="Search orders..."
-              className="h-9 w-57.5 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 text-xs outline-none transition placeholder:text-gray-400 focus:border-gray-300 focus:bg-white"
+              className="h-9 w-57.5 rounded-lg border border-border bg-hover pl-9 pr-3 text-xs text-foreground outline-none transition placeholder:text-muted focus:border-border-strong focus:bg-card"
             />
           </div>
 
           <button
             type="button"
-            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition hover:bg-gray-50 hover:text-gray-900"
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-secondary transition hover:bg-hover hover:text-foreground"
           >
             <Bell size={16} />
-            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-red-500" />
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-danger" />
           </button>
 
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-900 text-[11px] font-semibold text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-card">
             VS
           </div>
         </div>
@@ -247,26 +252,25 @@ export default function Orders() {
       <div className="px-8 py-7">
         <div className="mb-6 flex items-end justify-between">
           <div>
-            <p className="text-[11px] font-medium text-gray-400">
+            <p className="text-[11px] font-medium text-muted">
               OPERATIONS CENTER
             </p>
-            <h1 className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-foreground">
               Order management
             </h1>
-            <p className="mt-1 text-[11px] text-gray-400">
+            <p className="mt-1 text-[11px] text-muted">
               Monitor, assign and manage all delivery orders
             </p>
           </div>
 
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg bg-gray-900 px-3.5 py-2.5 text-[11px] font-medium text-white shadow-sm transition hover:bg-gray-800 hover:shadow-md"
+            className="flex items-center gap-2 rounded-lg bg-brand px-3.5 py-2.5 text-[11px] font-medium text-white shadow-sm transition hover:bg-brand-hover hover:shadow-md"
           >
             <Plus size={14} />
             Create order
           </button>
         </div>
-
         {/* ================= STATS ================= */}
         <div className="grid grid-cols-2 gap-4 xl:grid-cols-5">
           <StatCard
@@ -275,21 +279,21 @@ export default function Orders() {
             description="today"
             trend="+12.4%"
             icon={Package}
-            iconClass="bg-gray-100 text-gray-700"
+            iconClass="bg-elevated text-secondary"
           />
           <StatCard
             label="Pending"
             value={statusCounts.pending}
             description="awaiting dispatch"
             icon={Clock3}
-            iconClass="bg-yellow-50 text-yellow-600"
+            iconClass="bg-warning-bg text-warning"
           />
           <StatCard
             label="In Transit"
             value={statusCounts.inTransit}
             description="currently moving"
             icon={Truck}
-            iconClass="bg-blue-50 text-blue-600"
+            iconClass="bg-info-bg text-info"
           />
           <StatCard
             label="Delivered"
@@ -297,43 +301,44 @@ export default function Orders() {
             description="completed today"
             trend="+8.1%"
             icon={CheckCircle2}
-            iconClass="bg-emerald-50 text-emerald-600"
+            iconClass="bg-success-bg text-success"
           />
           <StatCard
             label="Exceptions"
             value={statusCounts.exceptions}
             description="need attention"
             icon={CircleAlert}
-            iconClass="bg-orange-50 text-orange-600"
+            iconClass="bg-danger-bg text-danger"
           />
         </div>
-
         {/* ================= ORDER TABLE ================= */}
-        <section className="mt-5 overflow-hidden rounded-xl border border-gray-200 bg-white">
-          <div className="border-b border-gray-100 px-5 py-4">
+        <section className="mt-5 overflow-hidden rounded-xl border border-border bg-card">
+          <div className="border-b border-border px-5 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {selectedStatus === "all"
-                    ? "All orders"
-                    : `${selectedStatus} orders`}
-                </h3>
-                <p className="mt-0.5 text-[11px] text-gray-400">
-                  {totalItems} {totalItems === 1 ? "order" : "orders"} found
-                </p>
+                <SectionHeader
+                  title={
+                    selectedStatus === "all"
+                      ? "All orders"
+                      : `${selectedStatus} orders`
+                  }
+                  subtitle={`${totalItems} ${
+                    totalItems === 1 ? "order" : "orders"
+                  } found`}
+                />
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[11px] font-medium text-gray-600 transition hover:bg-gray-50"
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-[11px] font-medium text-secondary transition hover:bg-hover hover:text-foreground"
                 >
                   <Filter size={13} />
                   Filter
                 </button>
                 <button
                   type="button"
-                  className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-[11px] font-medium text-gray-600 transition hover:bg-gray-50"
+                  className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-[11px] font-medium text-secondary transition hover:bg-hover hover:text-foreground"
                 >
                   <Download size={13} />
                   Export
@@ -345,6 +350,7 @@ export default function Orders() {
             <div className="mt-5 flex items-center gap-5 overflow-x-auto">
               {filterTabs.map(({ label, key, count }) => {
                 const isActive = selectedStatus === key;
+
                 return (
                   <button
                     type="button"
@@ -353,22 +359,22 @@ export default function Orders() {
                       setSelectedStatus(key);
                       setPageNum(1);
                     }}
-                    className={`relative pb-3 text-[11px] font-medium transition whitespace-nowrap ${
+                    className={`relative whitespace-nowrap pb-3 text-[11px] font-medium transition ${
                       isActive
-                        ? "font-semibold text-gray-900"
-                        : "text-gray-400 hover:text-gray-700"
+                        ? "font-semibold text-foreground"
+                        : "text-muted hover:text-secondary"
                     }`}
                   >
                     {label}
                     <span
                       className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[9px] ${
-                        isActive && "text-gray-900"
+                        isActive && "text-foreground"
                       }`}
                     >
                       {count}
                     </span>
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-gray-900" />
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full bg-brand" />
                     )}
                   </button>
                 );
@@ -380,41 +386,41 @@ export default function Orders() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[950px]">
               <thead>
-                <tr className="border-b border-gray-100 bg-gray-50/70">
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                <tr className="border-b border-border bg-hover/70">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Order
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Customer
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Route
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Driver
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Vehicle number
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Status
                   </th>
-                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-left text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Date
                   </th>
-                  <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+                  <th className="px-5 py-3 text-right text-[10px] font-semibold uppercase tracking-wider text-muted">
                     Amount
                   </th>
                   <th className="w-10" />
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-border">
                 {orders.length === 0 ? (
                   <tr>
                     <td
                       colSpan={9}
-                      className="px-5 py-10 text-center text-xs text-gray-400"
+                      className="px-5 py-10 text-center text-xs text-muted"
                     >
                       No orders found matching your criteria.
                     </td>
@@ -423,18 +429,18 @@ export default function Orders() {
                   orders.map((order) => (
                     <tr
                       key={order.id}
-                      className="group cursor-pointer transition hover:bg-gray-50/70"
+                      className="group cursor-pointer transition hover:bg-hover/70"
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-500 transition group-hover:bg-gray-900 group-hover:text-white">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-elevated text-secondary transition group-hover:bg-brand group-hover:text-white">
                             <Package size={14} />
                           </div>
                           <div>
-                            <p className="text-[11px] font-semibold text-gray-900">
+                            <p className="text-[11px] font-semibold text-foreground">
                               {order.id}
                             </p>
-                            <p className="mt-0.5 text-[9px] text-gray-400">
+                            <p className="mt-0.5 text-[9px] text-muted">
                               Standard delivery
                             </p>
                           </div>
@@ -442,18 +448,16 @@ export default function Orders() {
                       </td>
 
                       <td className="px-5 py-4">
-                        <p className="text-[11px] font-medium text-gray-700">
+                        <p className="text-[11px] font-medium text-secondary">
                           {order.customer}
                         </p>
-                        <p className="mt-0.5 text-[9px] text-gray-400">
-                          Customer
-                        </p>
+                        <p className="mt-0.5 text-[9px] text-muted">Customer</p>
                       </td>
 
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-2">
-                          <MapPin size={12} className="text-gray-400" />
-                          <span className="text-[11px] text-gray-600">
+                          <MapPin size={12} className="text-muted" />
+                          <span className="text-[11px] text-secondary">
                             {`${order.origin} to ${order.destination}`}
                           </span>
                         </div>
@@ -461,19 +465,19 @@ export default function Orders() {
 
                       <td className="px-5 py-4">
                         {order.driver === "Unassigned" ? (
-                          <span className="text-[10px] font-medium text-orange-600">
+                          <span className="text-[10px] font-medium text-warning">
                             Unassigned
                           </span>
                         ) : (
                           <div className="flex items-center gap-2">
-                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-[9px] font-semibold text-gray-600">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-elevated text-[9px] font-semibold text-secondary">
                               {order.driver
                                 ?.split(" ")
                                 .map((word) => word[0])
                                 .join("")
                                 .slice(0, 2)}
                             </div>
-                            <span className="text-[11px] text-gray-600">
+                            <span className="text-[11px] text-secondary">
                               {order.driver}
                             </span>
                           </div>
@@ -486,15 +490,15 @@ export default function Orders() {
                             size={13}
                             className={
                               order.vehicleNumber === "Unassigned"
-                                ? "text-orange-600"
-                                : "text-gray-400"
+                                ? "text-warning"
+                                : "text-muted"
                             }
                           />
                           <span
                             className={`text-[10px] font-medium ${
                               order.vehicleNumber === "Unassigned"
-                                ? "text-orange-600"
-                                : "text-gray-600"
+                                ? "text-warning"
+                                : "text-secondary"
                             }`}
                           >
                             {order.vehicleNumber}
@@ -507,16 +511,16 @@ export default function Orders() {
                       </td>
 
                       <td className="px-5 py-4">
-                        <p className="text-[10px] font-medium text-gray-600">
+                        <p className="text-[10px] font-medium text-secondary">
                           {order.date}
                         </p>
-                        <p className="mt-0.5 text-[9px] text-gray-400">
+                        <p className="mt-0.5 text-[9px] text-muted">
                           {order.time}
                         </p>
                       </td>
 
                       <td className="px-5 py-4 text-right">
-                        <span className="text-[11px] font-semibold text-gray-800">
+                        <span className="text-[11px] font-semibold text-foreground">
                           {`₹ ${order.value}`}
                         </span>
                       </td>
@@ -524,7 +528,7 @@ export default function Orders() {
                       <td className="px-4">
                         <button
                           type="button"
-                          className="rounded-md p-1 text-gray-300 transition hover:bg-gray-100 hover:text-gray-600"
+                          className="rounded-md p-1 text-muted transition hover:bg-hover hover:text-foreground"
                         >
                           <MoreHorizontal size={15} />
                         </button>
@@ -537,13 +541,14 @@ export default function Orders() {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between border-t border-gray-100 px-5 py-3.5">
-            <p className="text-[10px] text-gray-400">
+          <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
+            <p className="text-[10px] text-muted">
               Showing{" "}
-              <span className="font-medium text-gray-600">
+              <span className="font-medium text-secondary">
                 {firstElementNum}-{lastElementNum}
               </span>{" "}
-              of <span className="font-medium text-gray-600">{totalItems}</span>{" "}
+              of{" "}
+              <span className="font-medium text-secondary">{totalItems}</span>{" "}
               orders
             </p>
 
@@ -551,7 +556,7 @@ export default function Orders() {
               <button
                 type="button"
                 disabled={!pagination?.hasPrevPage}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-secondary transition hover:bg-hover hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 onClick={() => setPageNum((prev) => Math.max(1, prev - 1))}
               >
                 <ChevronLeft size={13} />
@@ -567,8 +572,8 @@ export default function Orders() {
                   onClick={() => setPageNum(page)}
                   className={`flex h-7 w-7 items-center justify-center rounded-md text-[10px] font-medium transition ${
                     pageNum === page
-                      ? "bg-gray-900 text-white"
-                      : "border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      ? "bg-brand text-white"
+                      : "border border-border text-secondary hover:bg-hover hover:text-foreground"
                   }`}
                 >
                   {page}
@@ -578,7 +583,7 @@ export default function Orders() {
               <button
                 type="button"
                 disabled={!pagination?.hasNextPage}
-                className="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-secondary transition hover:bg-hover hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 onClick={() =>
                   setPageNum((prev) =>
                     prev < (pagination?.totalPages || 1) ? prev + 1 : prev,
@@ -593,88 +598,85 @@ export default function Orders() {
 
         {/* ================= BOTTOM INFO ================= */}
         <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-3">
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Delivery progress
-                </h3>
-                <p className="mt-0.5 text-[10px] text-gray-400">
-                  Today's order completion
-                </p>
-              </div>
-              <span className="text-sm font-semibold text-gray-900">
+          <section className="rounded-xl border border-border bg-card p-5">
+            <SectionHeader
+              title="Delivery progress"
+              subtitle="Today's order completion"
+            />
+
+            <div className="flex justify-end">
+              <span className="text-sm font-semibold text-foreground">
                 {deliveryPercentage.toFixed(1)}%
               </span>
             </div>
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-gray-100">
+
+            <div className="mt-5 h-2 overflow-hidden rounded-full bg-elevated">
               <div
-                className="h-full rounded-full bg-gray-900 transition-all duration-700"
+                className="h-full rounded-full bg-brand transition-all duration-700"
                 style={{ width: `${deliveryPercentage}%` }}
               />
             </div>
-            <div className="mt-3 flex justify-between text-[10px] text-gray-400">
+
+            <div className="mt-3 flex justify-between text-[10px] text-muted">
               <span>{statusCounts.delivered} delivered</span>
               <span>{statusCounts.all} planned</span>
             </div>
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
+          <section className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Dispatch queue
-                </h3>
-                <p className="mt-0.5 text-[10px] text-gray-400">
-                  Orders waiting for assignment
-                </p>
-              </div>
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-yellow-50 text-yellow-600">
+              <SectionHeader
+                title="Dispatch queue"
+                subtitle="Orders waiting for assignment"
+              />
+
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-warning-bg text-warning">
                 <Navigation size={15} />
               </div>
             </div>
+
             <div className="mt-5 flex items-end gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-gray-900">
+              <span className="text-2xl font-semibold tracking-tight text-foreground">
                 {statusCounts.pending}
               </span>
-              <span className="mb-1 text-[10px] text-gray-400">
+              <span className="mb-1 text-[10px] text-muted">
                 orders pending
               </span>
             </div>
+
             <button
               type="button"
-              className="mt-4 flex items-center gap-1 text-[10px] font-medium text-gray-600 transition hover:text-gray-900"
+              className="mt-4 flex items-center gap-1 text-[10px] font-medium text-secondary transition hover:text-foreground"
             >
               Open dispatch queue
               <ArrowUpRight size={12} />
             </button>
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
+          <section className="rounded-xl border border-border bg-card p-5">
             <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Order exceptions
-                </h3>
-                <p className="mt-0.5 text-[10px] text-gray-400">
-                  Orders requiring attention
-                </p>
-              </div>
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+              <SectionHeader
+                title="Order exceptions"
+                subtitle="Orders requiring attention"
+              />
+
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-danger-bg text-danger">
                 <CircleAlert size={15} />
               </div>
             </div>
+
             <div className="mt-5 flex items-end gap-2">
-              <span className="text-2xl font-semibold tracking-tight text-gray-900">
+              <span className="text-2xl font-semibold tracking-tight text-foreground">
                 {statusCounts.exceptions}
               </span>
-              <span className="mb-1 text-[10px] text-gray-400">
+              <span className="mb-1 text-[10px] text-muted">
                 active exceptions
               </span>
             </div>
+
             <button
               type="button"
-              className="mt-4 flex items-center gap-1 text-[10px] font-medium text-gray-600 transition hover:text-gray-900"
+              className="mt-4 flex items-center gap-1 text-[10px] font-medium text-secondary transition hover:text-foreground"
             >
               Review exceptions
               <ArrowUpRight size={12} />
