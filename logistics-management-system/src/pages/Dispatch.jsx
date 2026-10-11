@@ -31,7 +31,7 @@ const statusStyles = {
 
 function StatCard({ label, value, description, icon: Icon, iconClass, trend }) {
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition duration-200 hover:-translate-y-0.5 hover:shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-400">{label}</p>

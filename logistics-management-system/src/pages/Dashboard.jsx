@@ -130,7 +130,9 @@ function StatusBadge({ status }) {
 
   const icons = {
     "In Transit": <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />,
-    "Out for Delivery": <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />,
+    "Out for Delivery": (
+      <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+    ),
     Delivered: <CheckCircle2 size={11} />,
     Delayed: <Clock3 size={11} />,
   };
@@ -147,15 +149,101 @@ function StatusBadge({ status }) {
   );
 }
 
+const kpiCards = [
+  {
+    title: "Total Orders",
+    value: "1,284",
+    description: "vs. 1,142 last month",
+    trend: "12.5%",
+    icon: Package,
+    iconBg: "bg-slate-100",
+    iconColor: "text-slate-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    title: "Active Deliveries",
+    value: "342",
+    description: "Currently on the road",
+    trend: "8.2%",
+    icon: Truck,
+    iconBg: "bg-blue-50",
+    iconColor: "text-blue-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    title: "Delivered Today",
+    value: "876",
+    description: "92% on-time delivery",
+    trend: "5.4%",
+    icon: CheckCircle2,
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    title: "Exceptions",
+    value: "18",
+    description: "3 require attention",
+    label: "Today",
+    icon: CircleAlert,
+    iconBg: "bg-amber-50",
+    iconColor: "text-amber-600",
+    trendColor: "text-slate-400",
+  },
+  {
+    title: "Fleet Utilization",
+    value: "84%",
+    description: "126 of 150 vehicles active",
+    label: "Fleet",
+    icon: Truck,
+    iconBg: "bg-violet-50",
+    iconColor: "text-violet-600",
+    trendColor: "text-slate-400",
+  },
+];
+
+const performanceMetrics = [
+  {
+    title: "On-time Delivery",
+    value: "92%",
+    change: "+3.2%",
+    target: "target 90%",
+    progress: "92%",
+    progressColor: "bg-success",
+  },
+  {
+    title: "Delivery Success",
+    value: "96.4%",
+    change: "+1.8%",
+    target: "target 95%",
+    progress: "96%",
+    progressColor: "bg-info",
+  },
+  {
+    title: "Avg. Delivery Time",
+    value: "38m",
+    change: "-6.4%",
+    target: "target 40m",
+    progress: "84%",
+    progressColor: "bg-violet",
+  },
+  {
+    title: "Active Fleet",
+    value: "84%",
+    change: "+4.1%",
+    target: "126 / 150",
+    progress: "84%",
+    progressColor: "bg-warning",
+  },
+];
+
 function SectionHeader({ title, subtitle, action }) {
   return (
     <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <h3 className="text-[13px] font-semibold text-gray-900">{title}</h3>
+        <h3 className="text-[13px] font-semibold text-foreground">{title}</h3>
 
-        {subtitle && (
-          <p className="mt-1 text-[10px] text-gray-400">{subtitle}</p>
-        )}
+        {subtitle && <p className="mt-1 text-[10px] text-muted">{subtitle}</p>}
       </div>
 
       {action && (
@@ -175,7 +263,7 @@ export default function Dashboard() {
   const { onMenuClick } = useLayout();
 
   return (
-    <div className="min-h-screen bg-[#f5f7fb] text-slate-900">
+    <div className="min-h-screen bg-page text-foreground">
       {/* Shared Header */}
       <Header
         title="Dashboard"
@@ -188,15 +276,15 @@ export default function Dashboard() {
         {/* Page Heading */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-gray-400">
+            <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.12em] text-secondary">
               Operations
             </p>
 
-            <h1 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl">
+            <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
               Good afternoon, Vinayak
             </h1>
 
-            <p className="mt-1 text-[11px] text-gray-400">
+            <p className="mt-1 text-[11px] text-secondary">
               Here's what's happening across your delivery network.
             </p>
           </div>
@@ -209,139 +297,55 @@ export default function Dashboard() {
             Create Dispatch
           </button>
         </div>
-
-        {/* KPI Cards */}
+        {/* KPI Cards (Key Performance Indicator)*/}
         <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          {/* Total Orders */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                <Package size={16} />
+          {kpiCards.map((card) => {
+            const Icon = card.icon;
+
+            return (
+              <div
+                key={card.title}
+                className="rounded-card border border-border bg-card p-5 transition hover:-translate-y-0.5 hover:shadow-card"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-xl ${card.iconBg} ${card.iconColor}`}
+                  >
+                    <Icon size={16} />
+                  </div>
+
+                  {card.trend ? (
+                    <span
+                      className={`flex items-center gap-1 text-[10px] font-semibold ${card.trendColor}`}
+                    >
+                      <ArrowUpRight size={12} />
+                      {card.trend}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-semibold text-muted">
+                      {card.label}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-[10px] font-medium text-muted">
+                  {card.title}
+                </p>
+
+                <p className="mt-1 text-xl font-semibold tracking-tight text-foreground">
+                  {card.value}
+                </p>
+
+                <p className="mt-1 text-[9px] text-muted">{card.description}</p>
               </div>
-
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
-                <ArrowUpRight size={12} />
-                12.5%
-              </span>
-            </div>
-
-            <p className="text-[10px] font-medium text-gray-400">
-              Total Orders
-            </p>
-
-            <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-              1,284
-            </p>
-
-            <p className="mt-1 text-[9px] text-gray-400">
-              vs. 1,142 last month
-            </p>
-          </div>
-
-          {/* Active Deliveries */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-                <Truck size={16} />
-              </div>
-
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
-                <ArrowUpRight size={12} />
-                8.2%
-              </span>
-            </div>
-
-            <p className="text-[10px] font-medium text-gray-400">
-              Active Deliveries
-            </p>
-
-            <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-              342
-            </p>
-
-            <p className="mt-1 text-[9px] text-gray-400">
-              Currently on the road
-            </p>
-          </div>
-
-          {/* Delivered */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
-                <CheckCircle2 size={16} />
-              </div>
-
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600">
-                <ArrowUpRight size={12} />
-                5.4%
-              </span>
-            </div>
-
-            <p className="text-[10px] font-medium text-gray-400">
-              Delivered Today
-            </p>
-
-            <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-              876
-            </p>
-
-            <p className="mt-1 text-[9px] text-gray-400">
-              92% on-time delivery
-            </p>
-          </div>
-
-          {/* Exceptions */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
-                <CircleAlert size={16} />
-              </div>
-
-              <span className="text-[10px] font-semibold text-slate-400">
-                Today
-              </span>
-            </div>
-
-            <p className="text-[10px] font-medium text-gray-400">Exceptions</p>
-
-            <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-              18
-            </p>
-
-            <p className="mt-1 text-[9px] text-gray-400">3 require attention</p>
-          </div>
-
-          {/* Fleet */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-sm">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
-                <Truck size={16} />
-              </div>
-
-              <span className="text-[10px] font-semibold text-slate-400">
-                Fleet
-              </span>
-            </div>
-
-            <p className="text-[10px] font-medium text-gray-400">
-              Fleet Utilization
-            </p>
-
-            <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">
-              84%
-            </p>
-
-            <p className="mt-1 text-[9px] text-gray-400">
-              126 of 150 vehicles active
-            </p>
-          </div>
+            );
+          })}
         </div>
-
-        {/* Main Dashboard Grid */}
+        {/* Main Live delivery and Exceptions Grid (2) */}
         <div className="grid grid-cols-1 gap-5 xl:grid-cols-12">
           {/* Live Delivery Map */}
           <div className="xl:col-span-8">
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+            <div className="overflow-hidden rounded-xl border border-border bg-card">
               <div className="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h3 className="text-[13px] font-semibold text-gray-900">
@@ -464,7 +468,7 @@ export default function Dashboard() {
 
           {/* Exceptions */}
           <div className="xl:col-span-4">
-            <div className="h-full rounded-xl border border-gray-200 bg-white p-5">
+            <div className="h-full rounded-xl border border-border bg-card p-5">
               <SectionHeader
                 title="Exceptions"
                 subtitle="Issues that need attention"
@@ -476,15 +480,15 @@ export default function Dashboard() {
                   const Icon = item.icon;
 
                   const toneStyles = {
-                    amber: "bg-amber-50 text-amber-600",
-                    red: "bg-red-50 text-red-600",
-                    green: "bg-emerald-50 text-emerald-600",
+                    amber: "bg-warning-bg text-warning",
+                    red: "bg-danger-bg text-danger",
+                    green: "bg-success-bg text-success",
                   };
 
                   return (
                     <div
                       key={item.title}
-                      className="flex gap-3 rounded-lg border border-gray-100 p-3 transition hover:bg-gray-50"
+                      className="flex gap-3 rounded-lg border border-border p-3 transition hover:bg-hover"
                     >
                       <div
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
@@ -496,20 +500,20 @@ export default function Dashboard() {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="text-[10px] font-semibold text-gray-800">
+                          <p className="text-[10px] font-semibold text-foreground">
                             {item.title}
                           </p>
 
-                          <span className="shrink-0 text-[9px] text-gray-400">
+                          <span className="shrink-0 text-[9px] text-muted">
                             {item.time}
                           </span>
                         </div>
 
-                        <p className="mt-1 text-[10px] text-gray-500">
+                        <p className="mt-1 text-[10px] text-secondary">
                           {item.description}
                         </p>
 
-                        <p className="mt-1 text-[9px] font-medium text-gray-400">
+                        <p className="mt-1 text-[9px] font-medium text-muted">
                           {item.type}
                         </p>
                       </div>
@@ -520,7 +524,7 @@ export default function Dashboard() {
 
               <button
                 type="button"
-                className="mt-4 flex w-full items-center justify-center gap-1 rounded-lg border border-gray-200 py-2.5 text-[10px] font-semibold text-gray-500 transition hover:bg-gray-50 hover:text-gray-900"
+                className="mt-4 flex w-full items-center justify-center gap-1 rounded-lg border border-border py-2.5 text-[10px] font-semibold text-secondary transition hover:bg-hover hover:text-foreground"
               >
                 Review exceptions
                 <ChevronRight size={13} />
@@ -528,269 +532,128 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-
         {/* Recent Orders + Driver Status */}
-        <div className="mt-5 grid grid-cols-1 gap-5 xl:grid-cols-12">
-          {/* Recent Orders */}
-          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white xl:col-span-8">
-            <div className="flex flex-col gap-3 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-[13px] font-semibold text-gray-900">
-                  Recent Orders
-                </h3>
-
-                <p className="mt-1 text-[10px] text-gray-400">
-                  Latest activity across your network
-                </p>
-              </div>
-
-              <button
-                type="button"
-                className="flex w-fit items-center gap-1 text-[10px] font-semibold text-gray-500 transition hover:text-gray-900"
-              >
-                View all
-                <ChevronRight size={13} />
-              </button>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-170">
-                <thead>
-                  <tr className="border-b border-gray-100 bg-gray-50/70">
-                    <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      Order
-                    </th>
-
-                    <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      Customer
-                    </th>
-
-                    <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      Destination
-                    </th>
-
-                    <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      Status
-                    </th>
-
-                    <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      ETA
-                    </th>
-
-                    <th className="px-5 py-3 text-right text-[9px] font-semibold uppercase tracking-wide text-gray-400">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {shipments.map((shipment) => (
-                    <tr
-                      key={shipment.id}
-                      className="border-b border-gray-100 last:border-0 transition hover:bg-gray-50/70"
-                    >
-                      <td className="px-5 py-3.5">
-                        <p className="text-[10px] font-semibold text-gray-800">
-                          {shipment.id}
-                        </p>
-
-                        <p className="mt-0.5 text-[9px] text-gray-400">
-                          {shipment.vehicle}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-3.5">
-                        <p className="text-[10px] font-medium text-gray-700">
-                          {shipment.customer}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1.5 text-[10px] text-gray-500">
-                          <MapPin size={11} />
-                          {shipment.destination}
-                        </div>
-                      </td>
-
-                      <td className="px-5 py-3.5">
-                        <StatusBadge status={shipment.status} />
-                      </td>
-
-                      <td className="px-5 py-3.5">
-                        <p className="text-[10px] font-medium text-gray-700">
-                          {shipment.eta}
-                        </p>
-                      </td>
-
-                      <td className="px-5 py-3.5 text-right">
-                        <button
-                          type="button"
-                          className="inline-flex h-7 w-7 items-center justify-center rounded-md text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
-                        >
-                          <MoreHorizontal size={15} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        <div className="overflow-hidden rounded-xl border border-border bg-card xl:col-span-8">
+          {/* Section Header */}
+          <div className="border-b border-border px-5 py-4">
+            <SectionHeader
+              title="Recent Orders"
+              subtitle="Latest activity across your network"
+              action="View all"
+            />
           </div>
 
-          {/* Agent Status */}
-          <div className="rounded-xl border border-gray-200 bg-white p-5 xl:col-span-4">
-            <SectionHeader
-              title="Driver Status"
-              subtitle="Current delivery workforce"
-              action="Manage"
-            />
+          {/* Orders Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-170">
+              <thead>
+                <tr className="border-b border-border bg-hover/70">
+                  <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    Order
+                  </th>
+                  <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    Customer
+                  </th>
+                  <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    Destination
+                  </th>
+                  <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    Status
+                  </th>
+                  <th className="px-5 py-3 text-left text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    ETA
+                  </th>
+                  <th className="px-5 py-3 text-right text-[9px] font-semibold uppercase tracking-wide text-muted">
+                    Action
+                  </th>
+                </tr>
+              </thead>
 
-            <div className="space-y-3">
-              {agents.map((agent) => (
-                <div
-                  key={agent.name}
-                  className="flex items-center gap-3 rounded-lg border border-gray-100 p-3 transition hover:bg-gray-50"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-[10px] font-semibold text-gray-600">
-                    {agent.initials}
-                  </div>
+              <tbody>
+                {shipments.map((shipment) => (
+                  <tr
+                    key={shipment.id}
+                    className="border-b border-border last:border-0 transition hover:bg-hover"
+                  >
+                    <td className="px-5 py-3.5">
+                      <p className="text-[10px] font-semibold text-foreground">
+                        {shipment.id}
+                      </p>
+                      <p className="mt-0.5 text-[9px] text-muted">
+                        {shipment.vehicle}
+                      </p>
+                    </td>
 
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[10px] font-semibold text-gray-800">
-                      {agent.name}
-                    </p>
+                    <td className="px-5 py-3.5">
+                      <p className="text-[10px] font-medium text-secondary">
+                        {shipment.customer}
+                      </p>
+                    </td>
 
-                    <div className="mt-1 flex items-center gap-1.5">
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          agent.status === "Available"
-                            ? "bg-emerald-500"
-                            : agent.status === "On Break"
-                              ? "bg-amber-500"
-                              : "bg-blue-500"
-                        }`}
-                      />
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-1.5 text-[10px] text-secondary">
+                        <MapPin size={11} />
+                        {shipment.destination}
+                      </div>
+                    </td>
 
-                      <span className="text-[9px] text-gray-400">
-                        {agent.status}
-                      </span>
-                    </div>
-                  </div>
+                    <td className="px-5 py-3.5">
+                      <StatusBadge status={shipment.status} />
+                    </td>
 
-                  <div className="text-right">
-                    <p className="text-[11px] font-semibold text-gray-800">
-                      {agent.deliveries}
-                    </p>
+                    <td className="px-5 py-3.5">
+                      <p className="text-[10px] font-medium text-secondary">
+                        {shipment.eta}
+                      </p>
+                    </td>
 
-                    <p className="text-[8px] text-gray-400">deliveries</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    <td className="px-5 py-3.5 text-right">
+                      <button
+                        type="button"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted transition hover:bg-hover hover:text-foreground"
+                      >
+                        <MoreHorizontal size={15} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
         {/* Performance */}
-        <div className="mt-5 rounded-xl border border-gray-200 bg-white p-5">
+        <div className="mt-5 rounded-xl border border-border bg-card p-5">
           <SectionHeader
             title="Today's Performance"
             subtitle="Delivery operations overview"
           />
-
+          {/* Performance Metrics */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {/* On-time */}
-            <div className="rounded-lg bg-gray-50 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-medium text-gray-400">
-                  On-time Delivery
-                </span>
-
-                <span className="text-[10px] font-semibold text-emerald-600">
-                  +3.2%
-                </span>
+            {performanceMetrics.map((metric) => (
+              <div key={metric.title} className="rounded-lg bg-hover p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-[10px] font-medium text-muted">
+                    {metric.title}
+                  </span>
+                  <span className="text-[10px] font-semibold text-success">
+                    {metric.change}
+                  </span>
+                </div>
+                <div className="flex items-end justify-between">
+                  <span className="text-xl font-semibold text-foreground">
+                    {metric.value}
+                  </span>
+                  <span className="text-[9px] text-muted">{metric.target}</span>
+                </div>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-elevated">
+                  <div
+                    className={`h-full rounded-full ${metric.progressColor}`}
+                    style={{ width: metric.progress }}
+                  />
+                </div>
               </div>
-
-              <div className="flex items-end justify-between">
-                <span className="text-xl font-semibold text-gray-900">92%</span>
-
-                <span className="text-[9px] text-gray-400">target 90%</span>
-              </div>
-
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full w-[92%] rounded-full bg-emerald-500" />
-              </div>
-            </div>
-
-            {/* Success */}
-            <div className="rounded-lg bg-gray-50 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-medium text-gray-400">
-                  Delivery Success
-                </span>
-
-                <span className="text-[10px] font-semibold text-emerald-600">
-                  +1.8%
-                </span>
-              </div>
-
-              <div className="flex items-end justify-between">
-                <span className="text-xl font-semibold text-gray-900">
-                  96.4%
-                </span>
-
-                <span className="text-[9px] text-gray-400">target 95%</span>
-              </div>
-
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full w-[96%] rounded-full bg-blue-500" />
-              </div>
-            </div>
-
-            {/* Avg delivery */}
-            <div className="rounded-lg bg-gray-50 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-medium text-gray-400">
-                  Avg. Delivery Time
-                </span>
-
-                <span className="text-[10px] font-semibold text-emerald-600">
-                  -6.4%
-                </span>
-              </div>
-
-              <div className="flex items-end justify-between">
-                <span className="text-xl font-semibold text-gray-900">38m</span>
-
-                <span className="text-[9px] text-gray-400">target 40m</span>
-              </div>
-
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full w-[84%] rounded-full bg-violet-500" />
-              </div>
-            </div>
-
-            {/* Active fleet */}
-            <div className="rounded-lg bg-gray-50 p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-[10px] font-medium text-gray-400">
-                  Active Fleet
-                </span>
-
-                <span className="text-[10px] font-semibold text-emerald-600">
-                  +4.1%
-                </span>
-              </div>
-
-              <div className="flex items-end justify-between">
-                <span className="text-xl font-semibold text-gray-900">84%</span>
-
-                <span className="text-[9px] text-gray-400">126 / 150</span>
-              </div>
-
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
-                <div className="h-full w-[84%] rounded-full bg-amber-500" />
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </main>
