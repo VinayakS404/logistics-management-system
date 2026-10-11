@@ -265,7 +265,7 @@ export default function Orders() {
 
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg bg-brand px-3.5 py-2.5 text-[11px] font-medium text-white shadow-sm transition hover:bg-brand-hover hover:shadow-md"
+            className="flex items-center gap-2 rounded-lg bg-brand px-3.5 py-2.5 text-[11px] font-medium text-white shadow-sm transition hover:shadow-md"
           >
             <Plus size={14} />
             Create order
